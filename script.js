@@ -18,7 +18,8 @@ function agregarEventosTarjetas() {
     const cards = document.querySelectorAll(".card");
 
     cards.forEach(card => {
-        card.addEventListener("click", function() {
+        card.addEventListener("click", function (e) {
+            e.preventDefault(); // Evita navegación si es un <a href="#">
             let titulo = this.querySelector("strong").innerText;
             let descripcion = this.querySelector("p").innerText;
 
@@ -30,95 +31,64 @@ function agregarEventosTarjetas() {
     });
 }
 
+// NUEVA LÓGICA PARA CAMBIO DE SECCIONES SIN PERDER CONTENIDO
 function cambiarContenido(seccion) {
-    let contenido = document.getElementById("contenido");
+    const contenido = document.getElementById("contenido");
 
-    if (seccion === "inicio") {
-        contenido.innerHTML = `
-            <h1>Planta de Tratamiento de Aguas Residuales de la FES Acatlán</h1>
-    <h2>Objetivo:</h2>
-    <p>Consutruir y poner en marcha la operación de la planta de tratamiento de aguas residuales para el riego de las áreas verdes de la FES Acatlán, a fin de minimizar el impacto ecológico, así como coayudar con la preservación del vital líquido suministrado por el pozo.</p>
+    // Oculta todas las secciones hijas del contenido
+    Array.from(contenido.children).forEach(child => {
+        child.style.display = "none";
+    });
 
-    <div class="contenido-flex">
-        <!-- Sección de Avisos -->
-        <div class="avisos">
-            <h3>Avisos</h3>
-            <div class="avisos-container">
-                <img src="aviso1.jpg" alt="Aviso 1" class="aviso-img">
-                <img src="aviso2.jpg" alt="Aviso 2" class="aviso-img">
-                <img src="aviso3.jpg" alt="Aviso 3" class="aviso-img">
-            </div>
-            <div class="indicadores">
-                <span class="punto" onclick="mostrarAviso(0)"></span>
-                <span class="punto" onclick="mostrarAviso(1)"></span>
-                <span class="punto" onclick="mostrarAviso(2)"></span>
-            </div>
-        </div>
+    // Si los contenedores no existen, se crean dinámicamente
+    if (!document.getElementById("seccion-inicio")) {
+        const seccionInicio = document.createElement("div");
+        seccionInicio.id = "seccion-inicio";
+        seccionInicio.innerHTML = contenido.innerHTML; // Copia lo actual
+        contenido.innerHTML = ""; // Limpia original
+        contenido.appendChild(seccionInicio);
+    }
 
-        <!-- Sección de Video -->
-        <div class="video-container">
-                <iframe 
-                src="https://www.youtube.com/embed/SEzmvImnuNE" 
-                title="Video explicativo sobre la planta de tratamiento" 
-                frameborder="0" 
-                allowfullscreen>
-            </iframe>
-        </div>
-    </div>
-
-    <div class="informacion">
-        <a href="#" class="card">
-            <img src="tratamiento_agua.jpg" alt="Planta de tratamiento">
-            <p><strong>TREN DE TRATAMIENTO</strong><br>Descubre el proceso de tratamiento del agua y su impacto positivo.</p>
-        </a>
-
-        <a href="#" class="card">
-            <img src="sustentabilidad.jpg" alt="Sustentabilidad">
-            <p><strong>ASPECTOS ACADÉMICOS</strong><br>Aplicamos tecnologías innovadoras para reducir la huella ecológica.</p>
-        </a>
-
-        <a href="#" class="card">
-            <img src="equipo_trabajo.jpg" alt="Equipo de trabajo">
-            <p><strong>IMPACTO Y VENTAJAS</strong><br>Nuestro personal capacitado garantiza la eficiencia del sistema.</p>
-        </a>
-    </div>
-
-
-
-        `;
-
-setTimeout(() => {
-            imagenes = document.querySelectorAll(".aviso-img");
-            puntos = document.querySelectorAll(".punto");
-            indiceActual = 0;
-            cambiarAvisos(); // Reiniciar el slider de imágenes
-        }, 100);
-
-        // Asegurarse de que los eventos de clic se vuelvan a agregar a las tarjetas
-        setTimeout(agregarEventosTarjetas, 10);
-    } else if (seccion === "fes") {
-        contenido.innerHTML = `
+    if (!document.getElementById("seccion-fes")) {
+        const fes = document.createElement("div");
+        fes.id = "seccion-fes";
+        fes.innerHTML = `
             <h2>Página en construcción</h2>
             <p>Próximamente información sobre la FES Acatlán.</p>
         `;
-    } else if (seccion === "ingresar") {
-        contenido.innerHTML = `
+        contenido.appendChild(fes);
+    }
+
+    if (!document.getElementById("seccion-ingresar")) {
+        const ingresar = document.createElement("div");
+        ingresar.id = "seccion-ingresar";
+        ingresar.innerHTML = `
             <h2>Página en construcción</h2>
             <p>Próximamente contenido sobre el acceso al sistema.</p>
         `;
+        contenido.appendChild(ingresar);
+    }
+
+    // Mostrar la sección seleccionada
+    const mostrar = document.getElementById(`seccion-${seccion}`);
+    if (mostrar) {
+        mostrar.style.display = "block";
+    }
+
+    // Reasignar eventos si estamos en inicio
+    if (seccion === "inicio") {
+        agregarEventosTarjetas();
     }
 }
 
-// Agregar eventos a las tarjetas al cargar la página
-document.addEventListener("DOMContentLoaded", agregarEventosTarjetas);
-
-
-
+// SLIDER DE CURIOSIDADES
 let indiceActual = 0;
-let imagenes = document.querySelectorAll(".aviso-img");
-let puntos = document.querySelectorAll(".punto");
+let imagenes = [];
+let puntos = [];
 
 function mostrarAviso(indice) {
+    if (!imagenes.length || !puntos.length) return;
+
     imagenes.forEach((img, i) => {
         img.style.opacity = i === indice ? "1" : "0";
         puntos[i].classList.toggle("activo", i === indice);
@@ -127,6 +97,9 @@ function mostrarAviso(indice) {
 }
 
 function cambiarAvisos() {
+    imagenes = document.querySelectorAll(".aviso-img");
+    puntos = document.querySelectorAll(".punto");
+
     mostrarAviso(indiceActual);
 
     setInterval(() => {
@@ -135,5 +108,67 @@ function cambiarAvisos() {
     }, 3000);
 }
 
-document.addEventListener("DOMContentLoaded", cambiarAvisos);
+// INICIAR TODO AL CARGAR
+document.addEventListener("DOMContentLoaded", () => {
+    agregarEventosTarjetas();
+    cambiarAvisos();
+    cambiarContenido("inicio");
+});
 
+
+
+  
+/*document.getElementById("loginForm").addEventListener("submit", function(event) {
+    event.preventDefault();
+    const username = document.getElementById("username").value;
+    const password = document.getElementById("password").value;
+    
+    // Credenciales predefinidas para el ejemplo
+    const validUsername = "admin";
+    const validPassword = "123456";
+    
+    if (username === validUsername && password === validPassword) {
+      document.getElementById("loginContainer").style.display = "none";
+      document.getElementById("menu-container").style.display = "block";
+    } else {
+      document.getElementById("error").style.display = "block";
+    }
+  });*/
+  const loginForm = document.getElementById('loginForm');
+  const errorMsg = document.getElementById('error');
+  const menuContainer = document.getElementById('menu-container');
+  const loginContainer = document.getElementById('loginContainer');
+
+  loginForm.addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+
+    // 👇 Aquí defines tu usuario y contraseña "falsos" para validar
+    const usuarioCorrecto = "admin";
+    const contraseñaCorrecta = "1234";
+
+    if (username === usuarioCorrecto && password === contraseñaCorrecta) {
+      // Oculta el login y muestra el menú
+      loginContainer.style.display = 'none';
+      menuContainer.style.display = 'block';
+    } else {
+      errorMsg.style.display = 'block';
+    }
+  });
+
+  // Código para el botón hamburguesa del menú (asegúrate de que esté en el DOM)
+  document.addEventListener('DOMContentLoaded', function () {
+    const toggle = document.getElementById('menu-toggle');
+    const menu = document.getElementById('menu');
+
+    if (toggle && menu) {
+      toggle.addEventListener('click', () => {
+        menu.classList.toggle('show');
+      });
+    }
+  });
+ 
+
+  
