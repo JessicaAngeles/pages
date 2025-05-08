@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <script defer src="script.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet">
-
 </head>
 <body>
 
@@ -23,34 +22,54 @@
 
     <!-- Navegación -->
     <div class="container">
-    <div class="barra_navegacion">
-        <a href="#" onclick="cambiarContenido('inicio')">Inicio</a>
-        <a href="#" onclick="cambiarContenido('fes')">FES Acatlán</a>
-        <a href="inicio_sesion.html" onclick="cambiarContenido('ingresar')">Ingresar</a>
+        <div class="barra_navegacion">
+            <a href="#" onclick="cambiarContenido('inicio')">Inicio</a>
+            <a href="#" onclick="cambiarContenido('sobre')">Sobre nosotros</a>
+            <a href="#" onclick="cambiarContenido('ingresar')">Ingresar</a>
+        </div>
     </div>
-</div>
 
-    <!-- Sección Hero -->
+    <!-- Contenido -->
     <div class="container">
         <section id="contenido" class="hero">
-            <h1>Planta de Tratamiento de Aguas Residuales de la FES Acatlán</h1>
-            <h2>Objetivo:</h2>
-            <p>Construir y poner en marcha la operación de la planta de tratamiento de aguas residuales para el riego de las áreas verdes de la FES Acatlán, a fin de minimizar el impacto ecológico, así como coadyuvar con la preservación del vital líquido suministrado por el pozo.</p>
+            <!-- Sección Inicio -->
+            <div id="seccion-inicio">
+                <!-- Introducción con texto y curiosidades al lado -->
+                <div class="intro-flex">
+                    <div class="intro-texto">
+                        <h1>Planta de Tratamiento de Aguas Residuales de la FES Acatlán</h1>
+                        <h2>Objetivo:</h2>
+                        <p>Construir y poner en marcha la operación de la planta de tratamiento de aguas residuales para el riego de las áreas verdes de la FES Acatlán, a fin de minimizar el impacto ecológico, así como coadyuvar con la preservación del vital líquido suministrado por el pozo.</p>
+                    </div>
+                    <div class="avisos">
+                        <h3>Curiosidades</h3>
+                        <div class="avisos-container">
+                            <img src="aviso1.jpg" alt="Curiosidad 1" class="aviso-img">
+                            <img src="aviso2.jpg" alt="Curiosidad 2" class="aviso-img">
+                            <img src="aviso3.jpg" alt="Curiosidad 3" class="aviso-img">
+                        </div>
+                        <div class="indicadores">
+                            <span class="punto" onclick="mostrarAviso(0)"></span>
+                            <span class="punto" onclick="mostrarAviso(1)"></span>
+                            <span class="punto" onclick="mostrarAviso(2)"></span>
+                        </div>
+                    </div>
+                </div>
 
-            <div class="contenido-flex">
-                <!-- Sección de Avisos -->
-                <div class="avisos">
-                    <h3>Avisos</h3>
-                    <div class="avisos-container">
-                        <img src="aviso1.jpg" alt="Aviso 1" class="aviso-img">
-                        <img src="aviso2.jpg" alt="Aviso 2" class="aviso-img">
-                        <img src="aviso3.jpg" alt="Aviso 3" class="aviso-img">
-                    </div>
-                    <div class="indicadores">
-                        <span class="punto" onclick="mostrarAviso(0)"></span>
-                        <span class="punto" onclick="mostrarAviso(1)"></span>
-                        <span class="punto" onclick="mostrarAviso(2)"></span>
-                    </div>
+                <!-- Tarjetas -->
+                <div class="informacion">
+                    <a href="#" class="card">
+                        <img src="tratamiento_agua.jpg" alt="Planta de tratamiento">
+                        <p><strong>TREN DE TRATAMIENTO</strong><br>Descubre el proceso de tratamiento del agua y su impacto positivo.</p>
+                    </a>
+                    <a href="#" class="card">
+                        <img src="sustentabilidad.jpg" alt="Sustentabilidad">
+                        <p><strong>ASPECTOS ACADÉMICOS</strong><br>Aplicamos tecnologías innovadoras para reducir la huella ecológica.</p>
+                    </a>
+                    <a href="#" class="card">
+                        <img src="equipo_trabajo.jpg" alt="Equipo de trabajo">
+                        <p><strong>IMPACTO Y VENTAJAS</strong><br>Nuestro personal capacitado garantiza la eficiencia del sistema.</p>
+                    </a>
                 </div>
 
                 <!-- Video -->
@@ -64,21 +83,64 @@
                 </div>
             </div>
 
-            <!-- Tarjetas -->
-            <div class="informacion">
-                <a href="#" class="card">
-                    <img src="tratamiento_agua.jpg" alt="Planta de tratamiento">
-                    <p><strong>TREN DE TRATAMIENTO</strong><br>Descubre el proceso de tratamiento del agua y su impacto positivo.</p>
-                </a>
-                <a href="#" class="card">
-                    <img src="sustentabilidad.jpg" alt="Sustentabilidad">
-                    <p><strong>ASPECTOS ACADÉMICOS</strong><br>Aplicamos tecnologías innovadoras para reducir la huella ecológica.</p>
-                </a>
-                <a href="#" class="card">
-                    <img src="equipo_trabajo.jpg" alt="Equipo de trabajo">
-                    <p><strong>IMPACTO Y VENTAJAS</strong><br>Nuestro personal capacitado garantiza la eficiencia del sistema.</p>
-                </a>
-            </div>
+            <!-- Sección Sobre Nosotros -->
+<div id="seccion-sobre" style="display:none;" class="sobre-nosotros">
+    <h2>Sobre nosotros</h2>
+    <div class="informacion">
+        <div class="card">
+            <img src="persona1.jpg" alt="Persona 1">
+            <p><strong>Laura Sánchez</strong><br>Coordinadora de proyecto con enfoque en sustentabilidad.</p>
+        </div>
+        <div class="card">
+            <img src="persona2.jpg" alt="Persona 2">
+            <p><strong>Marco Ruiz</strong><br>Especialista en tratamiento de aguas y monitoreo ambiental.</p>
+        </div>
+        <div class="card">
+            <img src="persona3.jpg" alt="Persona 3">
+            <p><strong>Andrea López</strong><br>Diseñadora UX encargada de la interfaz de usuario del sistema.</p>
+        </div>
+    </div>
+</div>
+
+
+
+            <!-- Sección Ingresar -->
+<div id="seccion-ingresar" style="display:none;">
+    <div class="login-container" id="loginContainer">
+      <h2>Iniciar Sesión</h2>
+      <form id="loginForm">
+        <input type="text" id="username" placeholder="Usuario" required>
+        <input type="password" id="password" placeholder="Contraseña" required>
+        <button type="submit">Ingresar</button>
+      </form>
+      <p id="error">Usuario o contraseña incorrectos</p>
+    </div>
+  
+    <div id="contenido-protegido" style="display:none; text-align:center;">
+      <h1>¡Bienvenido!</h1>
+      <p>Este es el contenido protegido.</p>
+    </div>
+  </div>
+  <script>
+    document.getElementById("loginForm").addEventListener("submit", function(event) {
+      event.preventDefault();
+      const username = document.getElementById("username").value;
+      const password = document.getElementById("password").value;
+      
+      // Credenciales predefinidas para el ejemplo
+      const validUsername = "admin";
+      const validPassword = "123456";
+      
+      if (username === validUsername && password === validPassword) {
+        window.location.href = "Menu1.html";
+        document.getElementById("loginContainer").style.display = "none";
+        document.getElementById("content").style.display = "block";
+      } else {
+        document.getElementById("error").style.display = "block";
+      }
+    });
+  </script>
+  
         </section>
     </div>
 
@@ -91,28 +153,29 @@
         </div>
     </div>
 
-<div class="container">
-    <div class="redes-sociales">
-        <h3>Contáctanos:</h3>
-        <a href="https://www.facebook.com/" target="_blank"><i class="fab fa-facebook"></i></a>
-        <a href="https://twitter.com/" target="_blank"><i class="fab fa-twitter"></i></a>
-        <a href="https://www.instagram.com/" target="_blank"><i class="fab fa-instagram"></i></a>
-        <a href="https://www.linkedin.com/" target="_blank"><i class="fab fa-linkedin"></i></a>
-    </div>
-</div>
-
-    <<!-- Créditos -->
-<div class="container">
-    <div class="creditos">
-        Hecho en México, todos los derechos reservados 2025.<br>
-        Esta página puede ser reproducida con fines no lucrativos, siempre y cuando no se mutile, se cite la fuente completa y su dirección electrónica. De otra forma, requiere permiso previo por escrito de la institución.
-        <div class="imagen-final">
-            <a href="https://www.unam.mx/">
-                <img src="UNAM-L.png" alt="UNAM-L" class="logoUNAM">
-            </a>
+    <!-- Redes Sociales -->
+    <div class="container">
+        <div class="redes-sociales">
+            <h3>Contáctanos:</h3>
+            <a href="https://www.facebook.com/" target="_blank"><i class="fab fa-facebook"></i></a>
+            <a href="https://twitter.com/" target="_blank"><i class="fab fa-twitter"></i></a>
+            <a href="https://www.instagram.com/" target="_blank"><i class="fab fa-instagram"></i></a>
+            <a href="https://www.linkedin.com/" target="_blank"><i class="fab fa-linkedin"></i></a>
         </div>
     </div>
-</div>
+
+    <!-- Créditos -->
+    <div class="container">
+        <div class="creditos">
+            Hecho en México, todos los derechos reservados 2025.<br>
+            Esta página puede ser reproducida con fines no lucrativos, siempre y cuando no se mutile, se cite la fuente completa y su dirección electrónica. De otra forma, requiere permiso previo por escrito de la institución.
+            <div class="imagen-final">
+                <a href="https://www.unam.mx/">
+                    <img src="UNAM-L.png" alt="UNAM-L" class="logoUNAM">
+                </a>
+            </div>
+        </div>
+    </div>
 
 </body>
 </html>
