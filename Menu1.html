@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
+  <title>Menú Profesional con Datos Completos y Gráficas</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f0f0f0;
+    }
+
+    header {
+      background-color: #45a4b7;
+      padding: 10px 20px;
+      position: relative;
+    }
+
+    .logo {
+      color: white;
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .menu {
+      display: flex;
+      gap: 15px;
+      align-items: center;
+    }
+
+    .menu a, .dropdown > a {
+      text-decoration: none;
+      color: white;
+      background-color: transparent;
+      padding: 10px 20px;
+      border-radius: 5px;
+      transition: background-color 0.3s ease;
+      line-height: 1;
+      display: inline-flex;
+      align-items: center;
+      height: 40px;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .menu a:hover, .dropdown > a:hover {
+      background-color: #368b9d;
+    }
+
+    .menu-toggle {
+      display: none;
+      flex-direction: column;
+      cursor: pointer;
+    }
+
+    .menu-toggle span {
+      height: 3px;
+      width: 25px;
+      background: white;
+      margin: 4px 0;
+      border-radius: 2px;
+    }
+
+    /* Dropdown container */
+    .dropdown {
+      position: relative;
+      height: 40px; 
+    }
+
+    /* Dropdown content */
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      background-color: #368b9d;
+      min-width: 250px;
+      border-radius: 5px;
+      z-index: 100;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+      padding: 10px 0;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .dropdown-content a {
+      display: block;
+      padding: 10px 25px;
+      color: white;
+      text-decoration: none;
+      line-height: 1.4;
+      margin: 5px 0;
+      border-radius: 0;
+      transition: background-color 0.3s ease;
+      cursor: pointer;
+    }
+
+    .dropdown-content a:hover {
+      background-color: #2a6f7d;
+    }
+
+    .dropdown:hover .dropdown-content,
+    .dropdown:focus-within .dropdown-content {
+      display: flex;
+    }
+/*
+body {
+    font-family: Arial, sans-serif;
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropbtn {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f1f1f1;
+    min-width: 250px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    text-align: center; /* Centra el texto 
+}
+
+.dropdown-content a:hover {
+    background-color: #ddd;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}*/
+
+
+    @media (max-width: 768px) {
+      .menu {
+        flex-direction: column;
+        width: 100%;
+        display: none;
+        margin-top: 10px;
+      }
+
+      .menu.show {
+        display: flex;
+      }
+
+      .menu-toggle {
+        display: flex;
+      }
+
+      .dropdown-content {
+        position: static;
+        box-shadow: none;
+        border-radius: 0;
+        background-color: #368b9d;
+        width: 100%;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+      }
+
+      .dropdown-content a {
+        padding: 15px 30px;
+        margin: 0;
+        border-bottom: 1px solid rgba(255,255,255,0.3);
+      }
+
+      .dropdown-content a:last-child {
+        border-bottom: none;
+      }
+    }
+
+    /* Section common styles */
+    main {
+      padding: 20px;
+      background: white;
+      max-width: 800px;
+      margin: 20px auto;
+      border-radius: 6px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+      min-height: 350px;
+    }
+
+    section.data-section {
+      display: none;
+    }
+
+    section.data-section.active {
+      display: block;
+    }
+
+    h2.section-title {
+      margin-bottom: 15px;
+      color: #45a4b7;
+      font-weight: 700;
+    }
+
+    form#filter-form {
+      margin-bottom: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      align-items: center;
+    }
+
+    form#filter-form label {
+      font-weight: 600;
+      margin-right: 5px;
+    }
+
+    form#filter-form input[type="date"],
+    form#filter-form button {
+      padding: 5px 10px;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    form#filter-form button {
+      background-color: #45a4b7;
+      color: white;
+      border: none;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    form#filter-form button:hover {
+      background-color: #368b9d;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+
+    table, th, td {
+      border: 1px solid #ccc;
+    }
+
+    th, td {
+      padding: 10px;
+      text-align: center;
+    }
+
+    th {
+      background-color: #45a4b7;
+      color: white;
+    }
+
+    button.edit-btn {
+      background-color: #368b9d;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button.edit-btn:hover {
+      background-color: #2a6f7d;
+    }
+
+    /* Modal Styles */
+    .modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      visibility: hidden;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      z-index: 1000;
+    }
+
+    .modal.active {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    .modal-content {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      width: 90%;
+      max-width: 400px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    }
+
+    .modal-content h2 {
+      margin-bottom: 15px;
+      color: #45a4b7;
+      text-align: center;
+    }
+
+    .modal-content label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 600;
+    }
+
+    .modal-content input[type="date"],
+    .modal-content input[type="number"] {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 15px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+    }
+
+    .modal-content .modal-buttons {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .modal-content button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    .modal-content button.save-btn {
+      background-color: #45a4b7;
+      color: white;
+      transition: background-color 0.3s ease;
+    }
+
+    .modal-content button.save-btn:hover {
+      background-color: #368b9d;
+    }
+
+    .modal-content button.cancel-btn {
+      background-color: #ccc;
+      color: #333;
+    }
+
+    .modal-content button.cancel-btn:hover {
+      background-color: #aaa;
+    }
+
+    /* Canvas graph container style */
+    .chart-container {
+      width: 100%;
+      max-width: 750px;
+      margin: 0 auto 30px;
+      height: 300px;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <nav>
+    <div class="logo">Mi Sitio</div>
+    <div class="menu-toggle" id="menu-toggle" aria-label="Toggle navigation">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+    <div class="menu" id="menu">
+      <div class="dropdown" tabindex="0">
+        <a href="#" aria-haspopup="true" aria-expanded="false" aria-controls="verdatos-menu" id="verdatos-button">
+          Ver Datos ▼
+        </a>
+        <div class="dropdown-content" role="menu" id="verdatos-menu" aria-labelledby="verdatos-button">
+          <a href="#" id="menu-riego" role="menuitem">Datos de Riego</a>
+          <a href="#" id="menu-demanda" role="menuitem">Demanda Química de Oxígeno</a>
+          <a href="#" id="menu-solidos" role="menuitem">Sólidos Suspendidos Totales</a>
+        </div>
+      </div>
+      <a href="#">Modificar Datos</a>
+      <a href="#">Estadísticas</a>
+      <a href="#">Calendario</a>
+    </div>
+  </nav>
+</header>
+
+<main>
+  <h1 id="welcome-text">Bienvenido</h1>
+  <p>Contenido de la página aquí...</p>
+
+  <!-- Datos de Riego -->
+  <section id="datos-riego" class="data-section" aria-label="Datos de Riego">
+    <h2 class="section-title">Datos de Riego</h2>
+    <form id="filter-riego" aria-label="Formulario para filtrar datos de riego">
+      <label for="riego-date-from">Desde:</label>
+      <input type="date" id="riego-date-from" name="date-from" />
+      <label for="riego-date-to">Hasta:</label>
+      <input type="date" id="riego-date-to" name="date-to" />
+      <button type="button" id="filter-riego-btn">Filtrar</button>
+    </form>
+    <table aria-live="polite" aria-label="Tabla de datos de riego">
+      <thead>
+        <tr>
+          <th>Fecha</th>
+          <th>Volumen de Riego (m³)</th>
+          <th>Acción</th>
+        </tr>
+      </thead>
+      <tbody id="table-riego-body"></tbody>
+    </table>
+    <div class="chart-container">
+      <canvas id="chart-riego"></canvas>
+    </div>
+  </section>
+
+  <!-- Demanda Química -->
+  <section id="datos-demanda" class="data-section" aria-label="Datos Demanda Química de Oxígeno">
+    <h2 class="section-title">Demanda Química de Oxígeno (DQO)</h2>
+    <form id="filter-demanda" aria-label="Formulario para filtrar datos de demanda química">
+      <label for="demanda-date-from">Desde:</label>
+      <input type="date" id="demanda-date-from" name="date-from" />
+      <label for="demanda-date-to">Hasta:</label>
+      <input type="date" id="demanda-date-to" name="date-to" />
+      <button type="button" id="filter-demanda-btn">Filtrar</button>
+    </form>
+    <table aria-live="polite" aria-label="Tabla de demanda química de oxígeno">
+      <thead>
+        <tr>
+          <th>Fecha</th>
+          <th>DQO (mg/L)</th>
+          <th>Acción</th>
+        </tr>
+      </thead>
+      <tbody id="table-demanda-body"></tbody>
+    </table>
+    <div class="chart-container">
+      <canvas id="chart-demanda"></canvas>
+    </div>
+  </section>
+
+  <!-- Sólidos Suspendidos -->
+  <section id="datos-solidos" class="data-section" aria-label="Datos de Sólidos Suspendidos Totales">
+    <h2 class="section-title">Sólidos Suspendidos Totales (SST)</h2>
+    <form id="filter-solidos" aria-label="Formulario para filtrar datos de sólidos suspendidos">
+      <label for="solidos-date-from">Desde:</label>
+      <input type="date" id="solidos-date-from" name="date-from" />
+      <label for="solidos-date-to">Hasta:</label>
+      <input type="date" id="solidos-date-to" name="date-to" />
+      <button type="button" id="filter-solidos-btn">Filtrar</button>
+    </form>
+    <table aria-live="polite" aria-label="Tabla de sólidos suspendidos totales">
+      <thead>
+        <tr>
+          <th>Fecha</th>
+          <th>SST (mg/L)</th>
+          <th>Acción</th>
+        </tr>
+      </thead>
+      <tbody id="table-solidos-body"></tbody>
+    </table>
+    <div class="chart-container">
+      <canvas id="chart-solidos"></canvas>
+    </div>
+  </section>
+</main>
+
+<!-- Modal para editar -->
+<div class="modal" id="modal">
+  <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="modal-title" aria-describedby="modal-desc">
+    <h2 id="modal-title">Editar Registro</h2>
+    <form id="edit-form">
+      <label for="edit-date">Fecha:</label>
+      <input type="date" id="edit-date" name="edit-date" required />
+      <label for="edit-value">Valor:</label>
+      <input type="number" id="edit-value" name="edit-value" min="0" step="0.01" required />
+      <div class="modal-buttons">
+        <button type="button" class="cancel-btn" id="cancel-btn">Cancelar</button>
+        <button type="submit" class="save-btn">Guardar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+  // Datos de ejemplo inicial
+  let datosRiego = [
+    { date: '2024-06-01', value: 100 },
+    { date: '2024-06-05', value: 120 },
+    { date: '2024-06-10', value: 95 }
+  ];
+  let datosDemanda = [
+    { date: '2024-06-01', value: 45 },
+    { date: '2024-06-06', value: 50 },
+    { date: '2024-06-12', value: 40 }
+  ];
+  let datosSolidos = [
+    { date: '2024-06-02', value: 30 },
+    { date: '2024-06-07', value: 27 },
+    { date: '2024-06-11', value: 25 }
+  ];
+
+  // Elementos para mostrar
+  const sections = {
+    riego: document.getElementById('datos-riego'),
+    demanda: document.getElementById('datos-demanda'),
+    solidos: document.getElementById('datos-solidos')
+  };
+
+  const welcomeText = document.getElementById('welcome-text');
+
+  // Tablas
+  const tableBodies = {
+    riego: document.getElementById('table-riego-body'),
+    demanda: document.getElementById('table-demanda-body'),
+    solidos: document.getElementById('table-solidos-body')
+  };
+
+  // Filtros
+  const filters = {
+    riego: {
+      from: document.getElementById('riego-date-from'),
+      to: document.getElementById('riego-date-to'),
+      button: document.getElementById('filter-riego-btn')
+    },
+    demanda: {
+      from: document.getElementById('demanda-date-from'),
+      to: document.getElementById('demanda-date-to'),
+      button: document.getElementById('filter-demanda-btn')
+    },
+    solidos: {
+      from: document.getElementById('solidos-date-from'),
+      to: document.getElementById('solidos-date-to'),
+      button: document.getElementById('filter-solidos-btn')
+    }
+  };
+
+  // Modal elementos y estado
+  const modal = document.getElementById('modal');
+  const editForm = document.getElementById('edit-form');
+  const editDate = document.getElementById('edit-date');
+  const editValue = document.getElementById('edit-value');
+  const cancelBtn = document.getElementById('cancel-btn');
+
+  let currentSectionKey = null; // 'riego' | 'demanda' | 'solidos'
+  let editIndex = null;
+
+  // Chart instances
+  let chartRiego = null;
+  let chartDemanda = null;
+  let chartSolidos = null;
+
+  // Función para mostrar sección seleccionada
+  function mostrarSeccion(key) {
+    welcomeText.style.display = 'none';
+    Object.values(sections).forEach(sec => sec.classList.remove('active'));
+    sections[key].classList.add('active');
+    currentSectionKey = key;
+    aplicarFiltro(key);
+  }
+
+  // Función para renderizar tabla
+  function renderizarTabla(key, datos) {
+    const tbody = tableBodies[key];
+    tbody.innerHTML = '';
+    if (datos.length === 0) {
+      const tr = document.createElement('tr');
+      const td = document.createElement('td');
+      td.colSpan = 3;
+      td.textContent = 'No hay datos para mostrar.';
+      td.style.fontStyle = 'italic';
+      tr.appendChild(td);
+      tbody.appendChild(tr);
+      actualizarGrafica(key, []);
+      return;
+    }
+    datos.forEach((item, index) => {
+      const tr = document.createElement('tr');
+      const tdDate = document.createElement('td');
+      const tdValue = document.createElement('td');
+      const tdActions = document.createElement('td');
+      tdDate.textContent = item.date;
+      tdValue.textContent = item.value.toFixed(2);
+
+      const editBtn = document.createElement('button');
+      editBtn.textContent = 'Editar';
+      editBtn.className = 'edit-btn';
+      editBtn.addEventListener('click', () => abrirModal(key, index));
+
+      tdActions.appendChild(editBtn);
+      tr.appendChild(tdDate);
+      tr.appendChild(tdValue);
+      tr.appendChild(tdActions);
+      tbody.appendChild(tr);
+    });
+    actualizarGrafica(key, datos);
+  }
+
+  // Función para aplicar filtro por fecha
+  function aplicarFiltro(key) {
+    let datos = [];
+    switch (key) {
+      case 'riego': datos = datosRiego; break;
+      case 'demanda': datos = datosDemanda; break;
+      case 'solidos': datos = datosSolidos; break;
+      default: return;
+    }
+    const fromDate = filters[key].from.value ? new Date(filters[key].from.value) : null;
+    const toDate = filters[key].to.value ? new Date(filters[key].to.value) : null;
+    const filtrados = datos.filter(item => {
+      const fecha = new Date(item.date);
+      if (fromDate && fecha < fromDate) return false;
+      if (toDate && fecha > toDate) return false;
+      return true;
+    });
+    renderizarTabla(key, filtrados);
+  }
+
+  // Abrir modal para editar
+  function abrirModal(key, index) {
+    currentSectionKey = key;
+    editIndex = index;
+    let registro;
+    switch (key) {
+      case 'riego': registro = datosRiego[index]; break;
+      case 'demanda': registro = datosDemanda[index]; break;
+      case 'solidos': registro = datosSolidos[index]; break;
+      default: return;
+    }
+    editDate.value = registro.date;
+    editValue.value = registro.value;
+    modal.classList.add('active');
+  }
+
+  // Cerrar modal
+  function cerrarModal() {
+    modal.classList.remove('active');
+    editIndex = null;
+  }
+
+  // Guardar cambios
+  editForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    if (editIndex === null) return;
+    const fecha = editDate.value;
+    const valor = parseFloat(editValue.value);
+    if (!fecha || isNaN(valor) || valor < 0) {
+      alert('Por favor, complete los datos correctamente.');
+      return;
+    }
+    switch (currentSectionKey) {
+      case 'riego':
+        datosRiego[editIndex] = { date: fecha, value: valor };
+        break;
+      case 'demanda':
+        datosDemanda[editIndex] = { date: fecha, value: valor };
+        break;
+      case 'solidos':
+        datosSolidos[editIndex] = { date: fecha, value: valor };
+        break;
+    }
+    cerrarModal();
+    aplicarFiltro(currentSectionKey);
+  });
+
+  cancelBtn.addEventListener('click', cerrarModal);
+
+  // Función para actualizar gráfica con Chart.js
+  function actualizarGrafica(key, datos) {
+    // Preparar etiquetas y datos ordenados por fecha ascendente
+    let sortedDatos = [...datos].sort((a,b) => new Date(a.date) - new Date(b.date));
+    let labels = sortedDatos.map(d => d.date);
+    let values = sortedDatos.map(d => d.value);
+
+    if (key === 'riego') {
+      if (chartRiego) {
+        chartRiego.data.labels = labels;
+        chartRiego.data.datasets[0].data = values;
+        chartRiego.update();
+      } else {
+        const ctx = document.getElementById('chart-riego').getContext('2d');
+        chartRiego = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels,
+            datasets: [{
+              label: 'Volumen de Riego (m³)',
+              data: values,
+              borderColor: '#45a4b7',
+              backgroundColor: 'rgba(69, 164, 183, 0.3)',
+              fill: true,
+              tension: 0.3
+            }]
+          },
+          options: {
+            responsive: true,
+            scales: {
+              x: { title: { display:true, text: 'Fecha' } },
+              y: { title: { display:true, text: 'Volumen (m³)' }, beginAtZero: true }
+            }
+          }
+        });
+      }
+    } else if (key === 'demanda') {
+      if (chartDemanda) {
+        chartDemanda.data.labels = labels;
+        chartDemanda.data.datasets[0].data = values;
+        chartDemanda.update();
+      } else {
+        const ctx = document.getElementById('chart-demanda').getContext('2d');
+        chartDemanda = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels,
+            datasets: [{
+              label: 'Demanda Química de Oxígeno (mg/L)',
+              data: values,
+              borderColor: '#45a4b7',
+              backgroundColor: 'rgba(69, 164, 183, 0.3)',
+              fill: true,
+              tension: 0.3
+            }]
+          },
+          options: {
+            responsive: true,
+            scales: {
+              x: { title: { display:true, text: 'Fecha' } },
+              y: { title: { display:true, text: 'DQO (mg/L)' }, beginAtZero: true }
+            }
+          }
+        });
+      }
+    } else if (key === 'solidos') {
+      if (chartSolidos) {
+        chartSolidos.data.labels = labels;
+        chartSolidos.data.datasets[0].data = values;
+        chartSolidos.update();
+      } else {
+        const ctx = document.getElementById('chart-solidos').getContext('2d');
+        chartSolidos = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels,
+            datasets: [{
+              label: 'Sólidos Suspendidos Totales (mg/L)',
+              data: values,
+              borderColor: '#45a4b7',
+              backgroundColor: 'rgba(69, 164, 183, 0.3)',
+              fill: true,
+              tension: 0.3
+            }]
+          },
+          options: {
+            responsive: true,
+            scales: {
+              x: { title: { display:true, text: 'Fecha' } },
+              y: { title: { display:true, text: 'SST (mg/L)' }, beginAtZero: true }
+            }
+          }
+        });
+      }
+    }
+  }
+
+  // Eventos filtro botones
+  filters.riego.button.addEventListener('click', () => aplicarFiltro('riego'));
+  filters.demanda.button.addEventListener('click', () => aplicarFiltro('demanda'));
+  filters.solidos.button.addEventListener('click', () => aplicarFiltro('solidos'));
+
+  // Eventos menú para mostrar secciones
+  document.getElementById('menu-riego').addEventListener('click', e => {
+    e.preventDefault();
+    mostrarSeccion('riego');
+  });
+  document.getElementById('menu-demanda').addEventListener('click', e => {
+    e.preventDefault();
+    mostrarSeccion('demanda');
+  });
+  document.getElementById('menu-solidos').addEventListener('click', e => {
+    e.preventDefault();
+    mostrarSeccion('solidos');
+  });
+
+  // Mostrar bienvenida inicialmente y ocultar secciones
+  document.addEventListener('DOMContentLoaded', () => {
+    welcomeText.style.display = 'block';
+    Object.values(sections).forEach(sec => sec.classList.remove('active'));
+  });
+
+  // Toggle menú (mobile)
+  const toggle = document.getElementById('menu-toggle');
+  const menu = document.getElementById('menu');
+  toggle.addEventListener('click', () => {
+    menu.classList.toggle('show');
+  });
+</script>
+
+</body>
+</html>
