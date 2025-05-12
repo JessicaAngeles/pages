@@ -6,7 +6,6 @@ function cerrarModal() {
     document.getElementById("modal").style.display = "none";
 }
 
-// Cierra el modal si se hace clic fuera del contenido
 window.onclick = function(event) {
     let modal = document.getElementById("modal");
     if (event.target === modal) {
@@ -19,65 +18,49 @@ function agregarEventosTarjetas() {
 
     cards.forEach(card => {
         card.addEventListener("click", function (e) {
-            e.preventDefault(); // Evita navegación si es un <a href="#">
-            let titulo = this.querySelector("strong").innerText;
-            let descripcion = this.querySelector("p").innerText;
+            e.preventDefault();
+
+            const titulo = this.querySelector("strong").innerText;
+            const descripcion = this.querySelector("p").innerText;
+            const imagen = this.querySelector("img").getAttribute("src");
 
             document.getElementById("modal-titulo").innerText = titulo;
-            document.getElementById("modal-texto").innerText = descripcion;
+            document.getElementById("modal-texto").innerText = descripcion + "\n\nEste es un ejemplo de texto ampliado que podrías extender para dar más detalles específicos sobre la tarjeta seleccionada.";
+            document.getElementById("modal-img").setAttribute("src", imagen);
 
             document.getElementById("modal").style.display = "flex";
         });
     });
 }
 
-// NUEVA LÓGICA PARA CAMBIO DE SECCIONES SIN PERDER CONTENIDO
-function cambiarContenido(seccion) {
-    const contenido = document.getElementById("contenido");
 
-    // Oculta todas las secciones hijas del contenido
-    Array.from(contenido.children).forEach(child => {
-        child.style.display = "none";
+
+function cambiarContenido(seccion) {
+    // Oculta todas las secciones
+    const secciones = document.querySelectorAll('#contenido > div');
+    secciones.forEach(sec => {
+        sec.style.display = 'none';
     });
 
-    // Si los contenedores no existen, se crean dinámicamente
-    if (!document.getElementById("seccion-inicio")) {
-        const seccionInicio = document.createElement("div");
-        seccionInicio.id = "seccion-inicio";
-        seccionInicio.innerHTML = contenido.innerHTML; // Copia lo actual
-        contenido.innerHTML = ""; // Limpia original
-        contenido.appendChild(seccionInicio);
-    }
-
-    if (!document.getElementById("seccion-fes")) {
-        const fes = document.createElement("div");
-        fes.id = "seccion-fes";
-        fes.innerHTML = `
-            <h2>Página en construcción</h2>
-            <p>Próximamente información sobre la FES Acatlán.</p>
-        `;
-        contenido.appendChild(fes);
-    }
-
-    if (!document.getElementById("seccion-ingresar")) {
-        const ingresar = document.createElement("div");
-        ingresar.id = "seccion-ingresar";
-        ingresar.innerHTML = `
-            <h2>Página en construcción</h2>
-            <p>Próximamente contenido sobre el acceso al sistema.</p>
-        `;
-        contenido.appendChild(ingresar);
-    }
-
-    // Mostrar la sección seleccionada
+    // Muestra la sección deseada
     const mostrar = document.getElementById(`seccion-${seccion}`);
     if (mostrar) {
-        mostrar.style.display = "block";
+        mostrar.style.display = 'block';
     }
 
-    // Reasignar eventos si estamos en inicio
+    // Vuelve a activar las tarjetas si se muestra la sección inicio
     if (seccion === "inicio") {
         agregarEventosTarjetas();
+    }
+
+    // Cambia la clase activa del menú
+    document.querySelectorAll('.nav-link').forEach(link => {
+        link.classList.remove('active');
+    });
+
+    const linkActivo = document.querySelector(`.nav-link[href="#${seccion}"]`);
+    if (linkActivo) {
+        linkActivo.classList.add('active');
     }
 }
 
@@ -112,63 +95,31 @@ function cambiarAvisos() {
 document.addEventListener("DOMContentLoaded", () => {
     agregarEventosTarjetas();
     cambiarAvisos();
-    cambiarContenido("inicio");
+    cambiarContenido("inicio"); // Muestra la sección 'inicio' por defecto
+
+    // Evento login
+    document.getElementById("loginForm").addEventListener("submit", function(event) {
+        event.preventDefault();
+        const username = document.getElementById("username").value;
+        const password = document.getElementById("password").value;
+
+        const validUsername = "admin";
+        const validPassword = "123456";
+
+        if (username === validUsername && password === validPassword) {
+            document.getElementById("loginContainer").style.display = "none";
+            document.getElementById("contenido-protegido").style.display = "block";
+        } else {
+            document.getElementById("error").style.display = "block";
+        }
+    });
+
+    // Evento de navegación
+    document.querySelectorAll('.nav-link').forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const hash = this.getAttribute('href').substring(1);
+            cambiarContenido(hash);
+        });
+    });
 });
-
-
-
-  
-/*document.getElementById("loginForm").addEventListener("submit", function(event) {
-    event.preventDefault();
-    const username = document.getElementById("username").value;
-    const password = document.getElementById("password").value;
-    
-    // Credenciales predefinidas para el ejemplo
-    const validUsername = "admin";
-    const validPassword = "123456";
-    
-    if (username === validUsername && password === validPassword) {
-      document.getElementById("loginContainer").style.display = "none";
-      document.getElementById("menu-container").style.display = "block";
-    } else {
-      document.getElementById("error").style.display = "block";
-    }
-  });*/
-  const loginForm = document.getElementById('loginForm');
-  const errorMsg = document.getElementById('error');
-  const menuContainer = document.getElementById('menu-container');
-  const loginContainer = document.getElementById('loginContainer');
-
-  loginForm.addEventListener('submit', function (e) {
-    e.preventDefault();
-
-    const username = document.getElementById('username').value;
-    const password = document.getElementById('password').value;
-
-    // 👇 Aquí defines tu usuario y contraseña "falsos" para validar
-    const usuarioCorrecto = "admin";
-    const contraseñaCorrecta = "1234";
-
-    if (username === usuarioCorrecto && password === contraseñaCorrecta) {
-      // Oculta el login y muestra el menú
-      loginContainer.style.display = 'none';
-      menuContainer.style.display = 'block';
-    } else {
-      errorMsg.style.display = 'block';
-    }
-  });
-
-  // Código para el botón hamburguesa del menú (asegúrate de que esté en el DOM)
-  document.addEventListener('DOMContentLoaded', function () {
-    const toggle = document.getElementById('menu-toggle');
-    const menu = document.getElementById('menu');
-
-    if (toggle && menu) {
-      toggle.addEventListener('click', () => {
-        menu.classList.toggle('show');
-      });
-    }
-  });
- 
-
-  
