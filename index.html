@@ -3,10 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <title>Planta de Tratamiento</title>
+
+    <!-- Estilos -->
     <link rel="stylesheet" href="estilo.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <script defer src="script.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <!-- Script -->
+    <script defer src="script.js"></script>
+
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #F8F9FA;
+            font-family: 'Inter', sans-serif;
+            color: #333;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1000px;  /* Ajuste para limitar el ancho */
+            margin: 0 auto;
+        }
+
+        .en-construccion {
+            text-align: center;
+            padding: 40px;
+            font-style: italic;
+            color: #666;
+            font-size: 1.2em;
+        }
+    </style>
 </head>
 <body>
 
@@ -22,106 +56,151 @@
 
     <!-- Navegación -->
     <div class="container">
-        <div class="barra_navegacion">
-            <a href="#" onclick="cambiarContenido('inicio')">Inicio</a>
-            <a href="#" onclick="cambiarContenido('sobre')">Sobre nosotros</a>
-            <a href="#" onclick="cambiarContenido('ingresar')">Ingresar</a>
-        </div>
+        <nav class="navbar">
+            <ul>
+                <li><a href="#inicio" class="nav-link active"><i class="fas fa-home"></i> Inicio</a></li>
+                <li><a href="#nosotros" class="nav-link"><i class="fas fa-users"></i> Nosotros</a></li>
+                <li><a href="#servicios" class="nav-link"><i class="fas fa-cogs"></i> Servicios</a></li>
+                <li><a href="#contacto" class="nav-link"><i class="fas fa-envelope"></i> Contacto</a></li>
+                <li><a href="#ingresar" class="nav-link" id="btnIngresar"><i class="fas fa-sign-in-alt"></i> Ingresar</a></li>
+            </ul>
+        </nav>
     </div>
 
     <!-- Contenido -->
     <div class="container">
-        <section id="contenido" class="hero">
+        <section id="contenido">
             <!-- Sección Inicio -->
-            <div id="seccion-inicio">
-                <!-- Introducción con texto y curiosidades al lado -->
-                <div class="intro-flex">
-                    <div class="intro-texto">
-                        <h1>Planta de Tratamiento de Aguas Residuales de la FES Acatlán</h1>
-                        <h2>Objetivo:</h2>
-                        <p>Construir y poner en marcha la operación de la planta de tratamiento de aguas residuales para el riego de las áreas verdes de la FES Acatlán, a fin de minimizar el impacto ecológico, así como coadyuvar con la preservación del vital líquido suministrado por el pozo.</p>
-                    </div>
-                    <div class="avisos">
-                        <h3>Curiosidades</h3>
-                        <div class="avisos-container">
-                            <img src="aviso1.jpg" alt="Curiosidad 1" class="aviso-img">
-                            <img src="aviso2.jpg" alt="Curiosidad 2" class="aviso-img">
-                            <img src="aviso3.jpg" alt="Curiosidad 3" class="aviso-img">
-                        </div>
-                        <div class="indicadores">
-                            <span class="punto" onclick="mostrarAviso(0)"></span>
-                            <span class="punto" onclick="mostrarAviso(1)"></span>
-                            <span class="punto" onclick="mostrarAviso(2)"></span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Tarjetas -->
-                <div class="informacion">
-                    <a href="#" class="card">
-                        <img src="tratamiento_agua.jpg" alt="Planta de tratamiento">
-                        <p><strong>TREN DE TRATAMIENTO</strong><br>Descubre el proceso de tratamiento del agua y su impacto positivo.</p>
-                    </a>
-                    <a href="#" class="card">
-                        <img src="sustentabilidad.jpg" alt="Sustentabilidad">
-                        <p><strong>ASPECTOS ACADÉMICOS</strong><br>Aplicamos tecnologías innovadoras para reducir la huella ecológica.</p>
-                    </a>
-                    <a href="#" class="card">
-                        <img src="equipo_trabajo.jpg" alt="Equipo de trabajo">
-                        <p><strong>IMPACTO Y VENTAJAS</strong><br>Nuestro personal capacitado garantiza la eficiencia del sistema.</p>
-                    </a>
-                </div>
-
-                <!-- Video -->
-                <div class="video-container">
-                    <iframe 
-                        src="https://www.youtube.com/embed/SEzmvImnuNE" 
-                        title="Video explicativo sobre la planta de tratamiento" 
-                        frameborder="0" 
-                        allowfullscreen>
-                    </iframe>
-                </div>
-            </div>
-
-            <!-- Sección Sobre Nosotros -->
-<div id="seccion-sobre" style="display:none;" class="sobre-nosotros">
-    <h2>Sobre nosotros</h2>
-    <div class="informacion">
-        <div class="card">
-            <img src="persona1.jpg" alt="Persona 1">
-            <p><strong>Laura Sánchez</strong><br>Coordinadora de proyecto con enfoque en sustentabilidad.</p>
+            <div id="seccion-inicio" class="inicio-wrapper">
+    <div class="info-curiosidades">
+        <div class="intro-container">
+    <div class="intro-texto">
+        <h1>Planta de Tratamiento de Aguas Residuales de la FES Acatlán</h1>
+        <h2>Objetivo:</h2>
+        <p>
+            Construir y poner en marcha la operación de la planta de tratamiento de aguas residuales para el riego de las áreas verdes de la FES Acatlán. Esto con el fin de minimizar el impacto ecológico, así como coadyuvar con la preservación del vital líquido suministrado por el pozo.
+        </p>
+    </div>
+    <div class="intro-imagen">
+        <img src="imagen_intro.jpg" alt="Imagen de la planta">
+    </div>
+</div>
+        <!-- Sección ¿Sabías que? -->
+<div class="sabias-que-section">
+    <h2 class="sabias-titulo"><i class="fas fa-lightbulb"></i> ¿Sabías que...?</h2>
+    <div class="sabias-que-carousel">
+        <div class="sabias-card">
+            <img src="Sabías.png" alt="Icono agua">
+            <h3>Reutilización de agua</h3>
+            <p>La planta reutiliza hasta el 90% del agua tratada para el riego de áreas verdes.</p>
         </div>
-        <div class="card">
-            <img src="persona2.jpg" alt="Persona 2">
-            <p><strong>Marco Ruiz</strong><br>Especialista en tratamiento de aguas y monitoreo ambiental.</p>
+        <div class="sabias-card">
+            <img src="Sabías.png" alt="Icono energía">
+            <h3>Energía eficiente</h3>
+            <p>Se emplean tecnologías de bajo consumo energético para el tratamiento.</p>
         </div>
-        <div class="card">
-            <img src="persona3.jpg" alt="Persona 3">
-            <p><strong>Andrea López</strong><br>Diseñadora UX encargada de la interfaz de usuario del sistema.</p>
+        <div class="sabias-card">
+            <img src="Sabías.png" alt="Icono reciclaje">
+            <h3>Impacto ecológico</h3>
+            <p>Contribuye a la reducción de residuos y preservación del recurso hídrico.</p>
+        </div>
+        <div class="sabias-card">
+            <img src="Sabías.png" alt="Icono monitoreo">
+            <h3>Monitoreo constante</h3>
+            <p>El proceso es supervisado 24/7 para garantizar calidad del agua tratada.</p>
+        </div>
+        <div class="sabias-card">
+            <img src="Sabías.png" alt="Icono educación">
+            <h3>Educación ambiental</h3>
+            <p>La planta también sirve como espacio de aprendizaje para estudiantes.</p>
         </div>
     </div>
 </div>
 
+    </div>
 
+    <div class="tarjetas-video">
+        <h2 class="titulo-tarjetas"><i class="fas fa-industry"></i> Funcionamiento de la planta</h2>
+        <div class="informacion">
+            <a href="#" class="card">
+                <img src="tratamiento_agua.jpg" alt="Planta de tratamiento">
+                <p><strong>TREN DE TRATAMIENTO</strong><br>Descubre el proceso de tratamiento del agua y su impacto positivo.</p>
+            </a>
+            <a href="#" class="card">
+                <img src="sustentabilidad.jpg" alt="Sustentabilidad">
+                <p><strong>ASPECTOS ACADÉMICOS</strong><br>Aplicamos tecnologías innovadoras para reducir la huella ecológica.</p>
+            </a>
+            <a href="#" class="card">
+                <img src="equipo_trabajo.jpg" alt="Equipo de trabajo">
+                <p><strong>IMPACTO Y VENTAJAS</strong><br>Nuestro personal capacitado garantiza la eficiencia del sistema.</p>
+            </a>
+        </div>
+
+        <div class="video-section">
+    <h2 class="video-title"><i class="fas fa-video"></i> Video sobre la planta</h2>
+    <div class="video-container">
+        <iframe 
+            src="https://www.youtube.com/embed/SEzmvImnuNE"
+            title="Video explicativo sobre la planta de tratamiento"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen>
+        </iframe>
+    </div>
+</div>
+
+    </div>
+</div>
+
+
+            <!-- Sección Sobre Nosotros -->
+            <div id="seccion-nosotros" style="display:none;" class="sobre-nosotros">
+                <h2>Sobre nosotros</h2>
+                <div class="informacion">
+                    <div class="card">
+                        <img src="persona1.jpg" alt="Persona 1">
+                        <p><strong>Laura Sánchez</strong><br>Coordinadora de proyecto con enfoque en sustentabilidad.</p>
+                    </div>
+                    <div class="card">
+                        <img src="persona1.jpg" alt="Persona 2">
+                        <p><strong>Marco Ruiz</strong><br>Especialista en tratamiento de aguas y monitoreo ambiental.</p>
+                    </div>
+                    <div class="card">
+                        <img src="persona1.jpg" alt="Persona 3">
+                        <p><strong>Andrea López</strong><br>Diseñadora UX encargada de la interfaz de usuario del sistema.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sección Servicios -->
+            <div id="seccion-servicios" style="display:none;">
+                <h2>Servicios</h2>
+                <p class="en-construccion">Estamos trabajando en esta sección. Pronto estará disponible.</p>
+            </div>
+
+            <!-- Sección Contacto -->
+            <div id="seccion-contacto" style="display:none;">
+                <h2>Contacto</h2>
+                <p class="en-construccion">Estamos trabajando en esta sección. Pronto estará disponible.</p>
+            </div>
 
             <!-- Sección Ingresar -->
-<div id="seccion-ingresar" style="display:none;">
-    <div class="login-container" id="loginContainer">
-      <h2>Iniciar Sesión</h2>
-      <form id="loginForm">
-        <input type="text" id="username" placeholder="Usuario" required>
-        <input type="password" id="password" placeholder="Contraseña" required>
-        <button type="submit">Ingresar</button>
-      </form>
-      <p id="error">Usuario o contraseña incorrectos</p>
-    </div>
-  
-    <div id="contenido-protegido" style="display:none; text-align:center;">
-      <h1>¡Bienvenido!</h1>
-      <p>Este es el contenido protegido.</p>
-    </div>
-  </div>
-  <script>
+            <div id="seccion-ingresar" style="display:none;">
+                <div class="login-container" id="loginContainer">
+                    <h2>Iniciar Sesión</h2>
+                    <form id="loginForm">
+                        <input type="text" id="username" placeholder="Usuario" required>
+                        <input type="password" id="password" placeholder="Contraseña" required>
+                        <button type="submit">Ingresar</button>
+                    </form>
+                    <p id="error">Usuario o contraseña incorrectos</p>
+                </div>
+
+                <div id="contenido-protegido" style="display:none; text-align:center;">
+                    <!--<h1>¡Bienvenido!</h1>
+                    <p>Este es el contenido protegido.</p>-->
+                </div>
+                <script>
     document.getElementById("loginForm").addEventListener("submit", function(event) {
       event.preventDefault();
       const username = document.getElementById("username").value;
@@ -132,7 +211,7 @@
       const validPassword = "123456";
       
       if (username === validUsername && password === validPassword) {
-        window.location.href = "Menu1.html";
+        window.location.href = "index.php";
         document.getElementById("loginContainer").style.display = "none";
         document.getElementById("content").style.display = "block";
       } else {
@@ -140,18 +219,25 @@
       }
     });
   </script>
-  
+            </div>
         </section>
     </div>
 
     <!-- Modal -->
-    <div id="modal" class="modal">
-        <div class="modal-contenido">
+<div id="modal" class="modal">
+    <div class="modal-contenido grande">
+        <div class="modal-imagen">
+            <img id="modal-img" src="" alt="Imagen ampliada">
+        </div>
+        <div class="modal-texto">
             <span class="cerrar" onclick="cerrarModal()">&times;</span>
             <h2 id="modal-titulo"></h2>
             <p id="modal-texto"></p>
         </div>
     </div>
+</div>
+
+
 
     <!-- Redes Sociales -->
     <div class="container">
