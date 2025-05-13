@@ -231,6 +231,7 @@ if (isset($_GET['tab'], $_GET['id']) && $_GET['tab'] === 'sst_edit') {
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <meta charset="UTF-8">
     <title>Sistema de Gestión</title>
     <style>
@@ -337,6 +338,14 @@ if (isset($_GET['tab'], $_GET['id']) && $_GET['tab'] === 'sst_edit') {
             <a href="?tab=sst_add" class="<?= $tab==='sst_add' ? 'active' : '' ?>">Agregar dato</a>
         </div>
     </div>
+    <div class="dropdown">
+    <button class="dropbtn">Calendario</button>
+    <div class="dropdown-content">
+        <a href="?tab=calendario" class="<?= $tab==='calendario' ? 'active' : '' ?>">Calendario</a>
+
+    </div>
+</div>
+
     <button class="logout-button" onclick="logout()">Log Out</button>
     </div>
     
@@ -348,8 +357,9 @@ function logout() {
 </script>
 
 <?php if ($tab === 'view'): ?>
-    <h2>Registros de Irrigación</h2>
+    <h2>Registros de Riego </h2>
     
+
 
     <?php
     $filter_fecha_desde = $_GET['filter_fecha_desde'] ?? '';
@@ -392,7 +402,54 @@ function logout() {
     while ($row = $res->fetch_assoc()) {
         $records[] = $row;
     }
-    ?>
+
+
+$fechas = array_column($records, 'fecha');
+$volumenes = array_map(function($r) {
+    return $r['volumen'] ?? 0;
+}, $records);
+?>
+
+<canvas id="graficaRiego" height="100" style="margin: 30px 0;"></canvas>
+<script>
+const ctx = document.getElementById('graficaRiego').getContext('2d');
+const etiquetas = <?= json_encode(array_reverse($fechas)) ?>;
+const volumenes = <?= json_encode(array_reverse($volumenes)) ?>;
+
+new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: etiquetas,
+        datasets: [{
+            label: 'Volumen de Riego (L)',
+            data: volumenes,
+            borderColor: '#007BA3',
+            backgroundColor: 'rgba(0, 123, 163, 0.2)',
+            tension: 0.2
+        }]
+    },
+    options: {
+        responsive: true,
+        scales: {
+            y: {
+                beginAtZero: true,
+                title: {
+                    display: true,
+                    text: 'Volumen (L)'
+                }
+            },
+            x: {
+                title: {
+                    display: true,
+                    text: 'Fecha'
+                }
+            }
+        }
+    }
+});
+</script>
+
+    
 
     <form method="GET" action="">
         <input type="hidden" name="tab" value="view" />
@@ -533,13 +590,90 @@ function logout() {
     </div>
 
 <?php elseif ($tab === 'dqo_view' || $tab === 'dqo'): ?>
+    
 
-    <?php
-    $res = $conn->query("SELECT * FROM dqo ORDER BY fecha_muestreo DESC");
-    $dqo_records = [];
-    if ($res) {
-        while ($row = $res->fetch_assoc()) $dqo_records[] = $row;
+   <?php
+// --- Filtro ---
+$where = [];
+
+if (!empty($_GET['fecha_inicio']) && !empty($_GET['fecha_fin'])) {
+    $inicio = $conn->real_escape_string($_GET['fecha_inicio']);
+    $fin = $conn->real_escape_string($_GET['fecha_fin']);
+    $where[] = "fecha_muestreo BETWEEN '$inicio' AND '$fin'";
+}
+
+if (!empty($_GET['ubicacion'])) {
+    $ubicacion = $conn->real_escape_string($_GET['ubicacion']);
+    $where[] = "ubicacion LIKE '%$ubicacion%'";
+}
+
+$condicion = $where ? "WHERE " . implode(" AND ", $where) : "";
+
+// --- Consulta final ---
+$res = $conn->query("SELECT * FROM dqo $condicion ORDER BY fecha_muestreo DESC");
+
+$dqo_records = [];
+if ($res && $res instanceof mysqli_result) {
+    while ($row = $res->fetch_assoc()) {
+        $dqo_records[] = $row;
     }
+}
+
+$dqo_fechas = array_column($dqo_records, 'fecha_muestreo');
+$dqo_valores = array_map(function($r) {
+    return $r['dqo_mg_l'] ?? 0;
+}, $dqo_records);
+?>
+
+<!-- Formulario de filtrado -->
+<form method="get" style="margin: 20px 0;">
+    <input type="hidden" name="tab" value="dqo">
+    <label>Fecha inicio:
+        <input type="date" name="fecha_inicio" value="<?= $_GET['fecha_inicio'] ?? '' ?>">
+    </label>
+    <label>Fecha fin:
+        <input type="date" name="fecha_fin" value="<?= $_GET['fecha_fin'] ?? '' ?>">
+    </label>
+    <label>Ubicación:
+        <input type="text" name="ubicacion" value="<?= $_GET['ubicacion'] ?? '' ?>">
+    </label>
+    <input type="submit" value="Filtrar">
+</form>
+
+<canvas id="graficaDQO" height="100" style="margin: 30px 0;"></canvas>
+<script>
+const ctxDQO = document.getElementById('graficaDQO').getContext('2d');
+const etiquetasDQO = <?= json_encode(array_reverse($dqo_fechas)) ?>;
+const valoresDQO = <?= json_encode(array_reverse($dqo_valores)) ?>;
+
+new Chart(ctxDQO, {
+    type: 'line',
+    data: {
+        labels: etiquetasDQO,
+        datasets: [{
+            label: 'DQO (mg/L)',
+            data: valoresDQO,
+            borderColor: '#FF6384',
+            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+            tension: 0.2
+        }]
+    },
+    options: {
+        responsive: true,
+        scales: {
+            y: {
+                beginAtZero: true,
+                title: { display: true, text: 'DQO (mg/L)' }
+            },
+            x: {
+                title: { display: true, text: 'Fecha de Muestreo' }
+            }
+        }
+    }
+});
+</script>
+
+
     ?>
 
     <h2>Demanda Química de Oxígeno (DQO) </h2>
@@ -631,15 +765,90 @@ function logout() {
 
 <?php elseif ($tab === 'dbo_view' || $tab === 'dbo'): ?>
 
-    <?php
-    $res = $conn->query("SELECT * FROM dbo ORDER BY fecha_muestreo DESC");
-    $dbo_records = [];
-    if ($res) {
-        while ($row = $res->fetch_assoc()) $dbo_records[] = $row;
-    }
-    ?>
+   <?php
+// --- Filtro ---
+$where = [];
 
-    <h2>Demanda Bioquímica de Oxígeno (DBO) - Listado</h2>
+if (!empty($_GET['fecha_inicio']) && !empty($_GET['fecha_fin'])) {
+    $inicio = $conn->real_escape_string($_GET['fecha_inicio']);
+    $fin = $conn->real_escape_string($_GET['fecha_fin']);
+    $where[] = "fecha_muestreo BETWEEN '$inicio' AND '$fin'";
+}
+
+if (!empty($_GET['ubicacion'])) {
+    $ubicacion = $conn->real_escape_string($_GET['ubicacion']);
+    $where[] = "ubicacion LIKE '%$ubicacion%'";
+}
+
+$condicion = $where ? "WHERE " . implode(" AND ", $where) : "";
+
+// --- Consulta final ---
+$res = $conn->query("SELECT * FROM dbo $condicion ORDER BY fecha_muestreo DESC");
+
+$dbo_records = [];
+if ($res && $res instanceof mysqli_result) {
+    while ($row = $res->fetch_assoc()) {
+        $dbo_records[] = $row;
+    }
+}
+
+$dbo_fechas = array_column($dbo_records, 'fecha_muestreo');
+$dbo_valores = array_map(function($r) {
+    return $r['dbo_mg_l'] ?? 0;
+}, $dbo_records);
+?>
+
+<!-- Formulario de filtrado -->
+<form method="get" style="margin: 20px 0;">
+    <input type="hidden" name="tab" value="dbo">
+    <label>Fecha inicio:
+        <input type="date" name="fecha_inicio" value="<?= $_GET['fecha_inicio'] ?? '' ?>">
+    </label>
+    <label>Fecha fin:
+        <input type="date" name="fecha_fin" value="<?= $_GET['fecha_fin'] ?? '' ?>">
+    </label>
+    <label>Ubicación:
+        <input type="text" name="ubicacion" value="<?= $_GET['ubicacion'] ?? '' ?>">
+    </label>
+    <input type="submit" value="Filtrar">
+</form>
+
+<!-- Gráfica -->
+<canvas id="graficaDBO" height="100" style="margin: 30px 0;"></canvas>
+<script>
+const ctxDBO = document.getElementById('graficaDBO').getContext('2d');
+const etiquetasDBO = <?= json_encode(array_reverse($dbo_fechas)) ?>;
+const valoresDBO = <?= json_encode(array_reverse($dbo_valores)) ?>;
+
+new Chart(ctxDBO, {
+    type: 'line',
+    data: {
+        labels: etiquetasDBO,
+        datasets: [{
+            label: 'DBO (mg/L)',
+            data: valoresDBO,
+            borderColor: '#36A2EB',
+            backgroundColor: 'rgba(54, 162, 235, 0.2)',
+            tension: 0.2
+        }]
+    },
+    options: {
+        responsive: true,
+        scales: {
+            y: {
+                beginAtZero: true,
+                title: { display: true, text: 'DBO (mg/L)' }
+            },
+            x: {
+                title: { display: true, text: 'Fecha de Muestreo' }
+            }
+        }
+    }
+});
+</script>
+
+
+    <h2>Demanda Bioquímica de Oxígeno (DBO)</h2>
     <table>
         <thead>
             <tr>
@@ -727,13 +936,88 @@ function logout() {
     </form>
 <?php elseif ($tab === 'sst_view' || $tab === 'sst'): ?>
 
-    <?php
-    $res = $conn->query("SELECT * FROM sst ORDER BY fecha_muestreo DESC");
-    $sst_records = [];
-    if ($res) {
-        while ($row = $res->fetch_assoc()) $sst_records[] = $row;
+   <?php
+// --- Filtro ---
+$where = [];
+
+if (!empty($_GET['fecha_inicio']) && !empty($_GET['fecha_fin'])) {
+    $inicio = $conn->real_escape_string($_GET['fecha_inicio']);
+    $fin = $conn->real_escape_string($_GET['fecha_fin']);
+    $where[] = "fecha_muestreo BETWEEN '$inicio' AND '$fin'";
+}
+
+if (!empty($_GET['ubicacion'])) {
+    $ubicacion = $conn->real_escape_string($_GET['ubicacion']);
+    $where[] = "ubicacion LIKE '%$ubicacion%'";
+}
+
+$condicion = $where ? "WHERE " . implode(" AND ", $where) : "";
+
+// --- Consulta final ---
+$res = $conn->query("SELECT * FROM sst $condicion ORDER BY fecha_muestreo DESC");
+
+$sst_records = [];
+if ($res && $res instanceof mysqli_result) {
+    while ($row = $res->fetch_assoc()) {
+        $sst_records[] = $row;
     }
-    ?>
+}
+
+$sst_fechas = array_column($sst_records, 'fecha_muestreo');
+$sst_valores = array_map(function($r) {
+    return $r['sst_mg_l'] ?? 0;
+}, $sst_records);
+?>
+
+<!-- Formulario de filtrado -->
+<form method="get" style="margin: 20px 0;">
+    <input type="hidden" name="tab" value="sst">
+    <label>Fecha inicio:
+        <input type="date" name="fecha_inicio" value="<?= $_GET['fecha_inicio'] ?? '' ?>">
+    </label>
+    <label>Fecha fin:
+        <input type="date" name="fecha_fin" value="<?= $_GET['fecha_fin'] ?? '' ?>">
+    </label>
+    <label>Ubicación:
+        <input type="text" name="ubicacion" value="<?= $_GET['ubicacion'] ?? '' ?>">
+    </label>
+    <input type="submit" value="Filtrar">
+</form>
+
+<!-- Gráfica -->
+<canvas id="graficaSST" height="100" style="margin: 30px 0;"></canvas>
+<script>
+const ctxSST = document.getElementById('graficaSST').getContext('2d');
+const etiquetasSST = <?= json_encode(array_reverse($sst_fechas)) ?>;
+const valoresSST = <?= json_encode(array_reverse($sst_valores)) ?>;
+
+new Chart(ctxSST, {
+    type: 'line',
+    data: {
+        labels: etiquetasSST,
+        datasets: [{
+            label: 'SST (mg/L)',
+            data: valoresSST,
+            borderColor: '#FFCE56',
+            backgroundColor: 'rgba(255, 206, 86, 0.2)',
+            tension: 0.2
+        }]
+    },
+    options: {
+        responsive: true,
+        scales: {
+            y: {
+                beginAtZero: true,
+                title: { display: true, text: 'SST (mg/L)' }
+            },
+            x: {
+                title: { display: true, text: 'Fecha de Muestreo' }
+            }
+        }
+    }
+});
+</script>
+
 
     <h2>Sólidos Suspendidos Totales (SST)</h2>
 
@@ -816,7 +1100,74 @@ function logout() {
         <input type="submit" value="Actualizar" />
     </form>
 
+    <?php elseif ($tab === 'calendario'): ?>
+    <h2>Calendario de Mantenimientos</h2>
+    <link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css' rel='stylesheet' />
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js'></script>
+    <div id="calendar"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var calendarEl = document.getElementById('calendar');
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                dateClick: function (info) {
+                    const title = prompt("¿Título del mantenimiento?");
+                    if (title) {
+                        fetch('guardar_evento.php', {
+                            method: 'POST',
+                            headers: {'Content-Type': 'application/json'},
+                            body: JSON.stringify({ title: title, start: info.dateStr })
+                        }).then(res => res.json()).then(data => {
+                            if (data.status === 'ok') {
+                                calendar.addEvent({ title: title, start: info.dateStr });
+
+                                if (Notification.permission === "granted") {
+                                    new Notification("Mantenimiento Agregado", {
+                                        body: title + " el " + info.dateStr,
+                                        icon: 'https://cdn-icons-png.flaticon.com/512/190/190411.png'
+                                    });
+                                }
+
+                                fetch('notificar.php');
+                            }
+                        });
+                    }
+                }
+            });
+            calendar.render();
+        });
+
+        const publicVapidKey = 'BPPIEQBVS67DFxmB85889GTN3au_1HEBeg6gNfMo_bU7vfvpgLO4ApVgP8lYs3AYECL05BbsRsKjeIy7p-oZsjc';
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', async () => {
+                const register = await navigator.serviceWorker.register('service-worker.js');
+                const subscription = await register.pushManager.subscribe({
+                    userVisibleOnly: true,
+                    applicationServerKey: urlBase64ToUint8Array(publicVapidKey)
+                });
+
+                await fetch('subscribe.php', {
+                    method: 'POST',
+                    body: JSON.stringify(subscription),
+                    headers: { 'Content-Type': 'application/json' }
+                });
+            });
+        }
+
+        function urlBase64ToUint8Array(base64String) {
+            const padding = '='.repeat((4 - base64String.length % 4) % 4);
+            const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+            const rawData = atob(base64);
+            return new Uint8Array([...rawData].map(char => char.charCodeAt(0)));
+        }
+    </script>
+
+
+
 <?php else: ?>
+
+
 
 <p>Pestaña no válida o registro no encontrado.</p>
 
